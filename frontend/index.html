@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="taskBoard.css">
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="main-page" id="main-page">
+      <div class="main-heading">
+        <p><span>Hey Prythwy !</span></p>
+        <p>Welcome to my first full stack website.</p>
+        <button id="click">Login</button>
+      </div>
+      <div class="login-form" id="login-form"></div>
+
+
+
+      <div class="task-board">
+        <div class="inputs">
+            <input type="text" id="title" placeholder="Enter your task...">
+            <input type="text" id="category" placeholder="Enter your task...">
+            <input type="text" id="description" class="description" placeholder="Enter your task full description...">
+
+            <select name="priority" id="selectionPriority"  >
+                <option value="high">high</option>
+                <option value="medium">medium</option>
+                <option value="low">low</option>
+            </select>
+            <button id="submitBtn">Add</button>
+        </div>
+        <div class="task-col">
+            <div class="taskList" id="taskList">
+              <h2></h2>
+            </div>
+
+          </div>
+        </div>
+        <div class="modalBox" id="modalBox"></div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
+
