@@ -1,7 +1,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  // output   = "../generated/prisma"
 }
 
 // prisma/schema.prisma
@@ -24,9 +24,10 @@ model User {
 
 model ToDo {
   id          Int      @id @default(autoincrement())
-  title       String   @unique
-  category    String
+  title       String   
   description String
+  category    String
+  priority    String
   userId      Int
   user        User     @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())

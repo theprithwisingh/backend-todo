@@ -1,197 +1,293 @@
-// const mainPage = document.getElementById("main-page");
-// const toggleButton = document.getElementById("click");
-// const loginForm = document.getElementById("login-form");
+const API_URL = 'http://localhost:3001/todos';
 
-// let isLogin = true;
-// let isLoggedIn = false;
+const fetchTodo=()=>{
+  fetch(API_URL).then(response=>response.json()).then(todos=>{
+    todos.forEach(todo=>renderTask(todo))
+  })
+  .catch(error => console.error('Error fetching todos:', error));
+}
 
-// const getFormTemplate = () => {
-//   return isLogin
-//     ? `
-//       <h2 class="login-heading">Login</h2>
-//       <input type="text" id="username" placeholder="Enter username..." />
-//       <input type="password" id="password" placeholder="Enter password..." />
-//       <button id="login-btn">Login</button>
-//       <p>Don't have an account? 
-//         <span class="toggle-mode" data-mode="signup" style="cursor: pointer; color: blue;">Sign up</span>
-//       </p>
-//     `
-//     : `
-//       <h2 class="login-heading">Sign Up</h2>
-//       <input type="text" id="email" placeholder="Enter your email..." />
-//       <input type="text" id="username" placeholder="Enter username..." />
-//       <input type="password" id="password" placeholder="Enter password..." />
-//       <button id="signup-btn">Sign Up</button>
-//       <p>Already have an account? 
-//         <span class="toggle-mode" data-mode="login" style="cursor: pointer; color: blue;">Login</span>
-//       </p>
-//     `;
-// };
-
-// // Show login/signup form
-// const renderForm = () => {
-//   loginForm.innerHTML = getFormTemplate();
-//   loginForm.style.backgroundColor = "#cee26b";
-//   toggleButton.textContent = isLogin ? "Sign Up" : "Login";
-  
-// };
-
-// // Show task board after login
-// const showTaskBoard = () => {
-//   document.querySelector(".main-heading").style.display = "none";
-//   loginForm.style.display = "none";
-//   document.querySelector(".task-board").style.display = "block";
-// };
-
-// // Handle login/signup click
-// toggleButton.addEventListener("click", () => {
-//   renderForm();
-// });
-
-// // Handle login/signup actions
-// loginForm.addEventListener("click", (e) => {
-//   const target = e.target;
-
-//   if (target.classList.contains("toggle-mode")) {
-//     isLogin = target.dataset.mode === "login";
-//     renderForm();
-//   }
-
-//   if (target.id === "login-btn" || target.id === "signup-btn") {
-//     // You can add validation/auth logic here
-//     isLoggedIn = true;
-//     showTaskBoard();
-//   }
-// });
-
-// // Show task board by default as hidden
-// document.querySelector(".task-board").style.display = "none";
-
-// // Task handling
-// const addButton = document.querySelector(".inputs button");
-// const taskCol = document.querySelector(".task-col");
-
-// addButton.addEventListener("click", () => {
-//   const title = document.getElementById("title").value;
-//   const category = document.getElementById("category").value;
-//   const priority = document.getElementById("selectionPriority").value;
-
-//   if (!title || !category) return alert("Please fill all fields");
-
-//   const newTask = document.createElement("div");
-//   newTask.className = "task";
-//   newTask.setAttribute("draggable", "true");
-//   newTask.innerText = `${title} (${category}) - ${priority}`;
-
-//   newTask.addEventListener("dragstart", dragStart);
-
-//   taskCol.children[0].appendChild(newTask);
-// });
-
-// // Drag and drop logic
-// let draggedTask = null;
-
-// function dragStart(e) {
-//   draggedTask = this;
-// }
-
-// document.querySelectorAll(".task-col > div").forEach((col) => {
-//   col.addEventListener("dragover", (e) => {
-//     e.preventDefault();
-//   });
-
-//   col.addEventListener("drop", function (e) {
-//     if (draggedTask) {
-//       this.appendChild(draggedTask);
-//       draggedTask = null;
-//     }
-//   });
-// });
-
+const mainPage = document.getElementById("main-page");
 const toggleButton = document.getElementById("click");
-const welcomeSection = document.getElementById("welcome-section");
-const loginForm = document.getElementById("login-form");
-const taskBoard = document.getElementById("task-board");
 
 let isLogin = true;
 
+// HTML template function
 const getFormTemplate = () => {
   return isLogin
     ? `
-      <h2>Login</h2>
-      <input type="text" id="username" placeholder="Enter username" /><br /><br />
-      <input type="password" id="password" placeholder="Enter password" /><br /><br />
-      <button id="submitLogin">Login</button>
-      <p>Don't have an account?
-        <span class="toggle-mode" data-mode="signup" style="color: blue; cursor: pointer;">Sign up</span>
+      <h2 class="login-heading">Login</h2>
+      <input type="text" id="username" placeholder="Enter username..." />
+      <input type="password" id="password" placeholder="Enter password..." />
+      <button>Login</button>
+      <p>Don't have an account? 
+        <span class="toggle-mode" data-mode="signup" style="cursor: pointer; color: blue;">Sign up</span>
       </p>
-    `
+      `
+    
     : `
-      <h2>Sign Up</h2>
-      <input type="text" id="email" placeholder="Enter email" /><br /><br />
-      <input type="text" id="username" placeholder="Enter username" /><br /><br />
-      <input type="password" id="password" placeholder="Enter password" /><br /><br />
-      <button id="submitSignup">Sign Up</button>
-      <p>Already have an account?
-        <span class="toggle-mode" data-mode="login" style="color: blue; cursor: pointer;">Login</span>
+      <h2 class="login-heading">Sign Up</h2>
+      <input type="text" id="email" placeholder="Enter your email..." />
+      <input type="text" id="username" placeholder="Enter username..." />
+      <input type="password" id="password" placeholder="Enter password..." />
+      <button>Sign Up</button>
+      <p>Already have an account? 
+        <span class="toggle-mode" data-mode="login" style="cursor: pointer; color: blue;">Login</span>
       </p>
-    `;
+      `
+    ;
 };
 
+// Render function
 const renderForm = () => {
-  welcomeSection.style.display = "none";
-  loginForm.style.display = "block";
-  loginForm.innerHTML = getFormTemplate();
+  mainPage.innerHTML = ""; // Clear existing content
+  const formContainer = document.createElement("div");
+  formContainer.className = "login-form";
+  formContainer.style.backgroundColor = "#cee26b";
+  formContainer.innerHTML = getFormTemplate();
+
+ 
+  mainPage.appendChild(formContainer);
+
+  toggleButton.textContent = isLogin ? "Sign Up" : "Login";
 };
 
+// Event listeners
 toggleButton.addEventListener("click", renderForm);
 
-// Handle form actions
-loginForm.addEventListener("click", (e) => {
-  if (e.target.classList.contains("toggle-mode")) {
-    const mode = e.target.dataset.mode;
+//Delegated event handler inside mainPage
+mainPage.addEventListener("click", (e) => {
+  const target = e.target;
+  console.log(target.classList.contains("toggle-mode"))
+  if (target.classList.contains("toggle-mode")) {
+    const mode = target.dataset.mode;
+    console.log(mode)
     isLogin = mode === "login";
+    console.log("isLogin",isLogin)
     renderForm();
   }
+});
 
-  if (e.target.id === "submitLogin" || e.target.id === "submitSignup") {
-    loginForm.style.display = "none";
-    taskBoard.style.display = "block";
+//CRUDE
+const taskTitle = document.getElementById("title")
+const category = document.getElementById("category")
+const description = document.getElementById("description")
+const selectionPriority = document.getElementById("selectionPriority")
+const submitBtn = document.getElementById("submitBtn")
+const taskList = document.getElementById("taskList")
+const modalBox = document.getElementById("modalBox")
+
+let taskArr =JSON.parse(localStorage.getItem("tasks"))||[];
+console.log(taskArr)
+let editIndex = -1;
+
+const styleForRender = {
+
+
+  taskItem: {
+    border: "1px solid #ddd",
+    padding: "15px",
+    marginBottom: "10px",
+    borderRadius: "10px",
+    boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+    backgroundColor: "#f9f9f9",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "10px",
+    fontFamily: "Arial, sans-serif",
+  },
+  taskBtn: {
+    padding: "6px 10px",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    backgroundColor: "#4CAF50",
+    color: "#fff",
+  },
+  taskTitle: {
+    cursor: "pointer",
+    flex: "1",
+    margin: "0",
+  },
+};
+
+
+function renderTask() {
+  taskList.innerHTML = "";
+
+  taskArr.forEach((item, index) => {
+    const taskItem = document.createElement("div");
+    taskItem.classList.add("taskItem");
+    Object.assign(taskItem.style, styleForRender.taskItem); // ← Style task container
+
+    const taskTitle = document.createElement("p");
+    taskTitle.innerHTML = `<strong>Title:</strong> ${item.title}`;
+    taskTitle.onclick = () => modalFun(index);
+    Object.assign(taskTitle.style, styleForRender.taskTitle); // ← Style title
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.onclick = () => deleteBtn(index);
+    Object.assign(deleteButton.style, styleForRender.taskBtn); // ← Style button
+
+    const editButton = document.createElement("button");
+    editButton.textContent = "Edit";
+    editButton.onclick = () => editBtn(index);
+    Object.assign(editButton.style, styleForRender.taskBtn); // ← Style button
+
+    taskItem.appendChild(taskTitle);
+    taskItem.appendChild(deleteButton);
+    taskItem.appendChild(editButton);
+
+    taskList.appendChild(taskItem);
+  });
+}
+
+function addTaskBtn() {
+  const title = taskTitle.value.trim();
+  const taskCategory = category.value.trim();
+  const taskdescription = description.value.trim()
+  const priority = selectionPriority.value;
+
+  if (!title || !taskCategory || !priority) {
+    alert("Please fill out all fields.");
+    return;
   }
-});
 
-// Task adding
-document.getElementById("add-task-btn").addEventListener("click", () => {
-  const title = document.getElementById("title").value;
-  const priority = document.getElementById("selectionPriority").value;
+  const newTask = {
+    title: title,
+    taskdescription:taskdescription,
+    category: taskCategory,
+    priority: priority
+  };
 
-  if (!title) return;
+  if (editIndex === -1) {
+    taskArr.push(newTask);
+  } else {
+    taskArr[editIndex] = newTask;
+    editIndex = -1;
+  }
 
-  const task = document.createElement("div");
-  task.className = "task";
-  task.draggable = true;
-  task.textContent = `${title} (${priority})`;
-  task.ondragstart = drag;
-
-  document.getElementById("task-todo").appendChild(task);
-  document.getElementById("title").value = "";
-});
-
-// Drag and Drop Logic
-function allowDrop(ev) {
-  ev.preventDefault();
+  //taskArr = [...taskArr,newTask]// Add new task
+  localStorage.setItem("tasks" ,JSON.stringify(taskArr));
+  renderTask(); // Re-render list
+ 
+  // Clear inputs
+  taskTitle.value = "";
+  description.value=""
+  category.value = "";
+  selectionPriority.value = "";
 }
 
-function drag(ev) {
-  ev.dataTransfer.setData("text", ev.target.id);
-  ev.dataTransfer.setData("element", ev.target.outerHTML);
-  ev.target.remove(); // remove from old location
+function deleteBtn(idx) {
+  taskArr = taskArr.filter((_, i) => i !== idx);
+  localStorage.setItem("tasks", JSON.stringify(taskArr));
+  renderTask();
 }
 
-function drop(ev) {
-  ev.preventDefault();
-  const elementHTML = ev.dataTransfer.getData("element");
-  ev.target.insertAdjacentHTML("beforeend", elementHTML);
-  const tasks = ev.target.querySelectorAll(".task");
-  tasks.forEach((t) => (t.ondragstart = drag));
+function editBtn(idx){
+ const task = taskArr[idx];
+  taskTitle.value=task.title;
+  description.value=task.taskdescription
+  category.value=task.category;
+  selectionPriority.value=task.priority;
+  editIndex = idx;
 }
+
+//css object
+const styles = {
+  modalBox: {
+    backgroundColor: "#fff",
+    padding: "20px",
+    borderRadius: "12px",
+    boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+    width: "300px",
+    margin: "100px auto",
+    fontFamily: "Arial, sans-serif",
+    zIndex: 1000,
+    position: "relative",
+  },
+  closeBtn: {
+    backgroundColor: "#f44336",
+    color: "#fff",
+    padding: "8px 12px",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    marginTop: "15px",
+  },
+  btnsDiv: {
+    marginTop: "20px",
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  actionBtn: {
+    padding: "8px 12px",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    backgroundColor: "#2196F3",
+    color: "#fff",
+  },
+};
+
+function modalFun(idx) {
+  const task = taskArr[idx];
+  const taskTitle = task.title;
+  const description = task.taskdescription;
+  const category = task.category;
+  const selectionPriority = task.priority;
+
+  modalBox.innerHTML = ""; // Clear previous modal
+
+  const openModal = document.createElement("div");
+  openModal.classList.add("modalBox");
+  Object.assign(openModal.style, styles.modalBox); // ← Apply modal styles
+
+  const title = document.createElement("h3");
+  title.innerHTML = `<strong>Title:</strong> ${taskTitle}`;
+
+  const desc = document.createElement("p");
+  title.innerHTML = `<strong>desc:</strong> ${description}`;
+
+  const taskCategory = document.createElement("p");
+  taskCategory.innerHTML = `<strong>Category:</strong> ${category}`;
+
+  const taskPriority = document.createElement("p");
+  taskPriority.innerHTML = `<strong>Priority:</strong> ${selectionPriority}`;
+
+  const closeBtn = document.createElement("button");
+  closeBtn.textContent = "Close";
+  closeBtn.classList.add("close-btn");
+  Object.assign(closeBtn.style, styles.closeBtn); // ← Style close button
+  closeBtn.addEventListener("click", () => {
+    modalBox.innerHTML = "";
+  });
+
+  const btnsDiv = document.createElement("div");
+  btnsDiv.innerHTML = `
+    <button onclick="deleteBtn(${idx})">Delete</button>
+    <button onclick="editBtn(${idx})">Edit</button>
+  `;
+  Object.assign(btnsDiv.style, styles.btnsDiv); // ← Style button container
+
+  // Wait for buttons to be created, then style them
+  setTimeout(() => {
+    const actionButtons = btnsDiv.querySelectorAll("button");
+    actionButtons.forEach(btn => {
+      Object.assign(btn.style, styles.actionBtn); // ← Style each action button
+    });
+  }, 0);
+
+  openModal.appendChild(title);
+  openModal.appendChild(desc);
+  openModal.appendChild(taskCategory);
+  openModal.appendChild(taskPriority);
+  openModal.appendChild(closeBtn);
+  openModal.appendChild(btnsDiv);
+  modalBox.appendChild(openModal);
+}
+
+renderTask();
+submitBtn.addEventListener("click",addTaskBtn)

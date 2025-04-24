@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const { PrismaClient } = require("@prisma/client");
+import {PrismaClient} from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function signupController(req, res, next) {
@@ -50,10 +50,10 @@ export async function signupController(req, res, next) {
   next();
 }
 export async function signinController(req, res, next) {
-  const { identifier, password } = req.body;
+  const { username, password } = req.body;
   const user = await prisma.user.findFirst({
     where: {
-      OR: [{ username: identifier }, { email: identifier }],
+      OR: [{ username: username }],
     },
   });
   //if user dont exist
@@ -75,21 +75,82 @@ export async function signinController(req, res, next) {
  next()
 }
 
-export async function todoController(req, res, next) {
-    const { id } = req.params;
-  
-    try {
-      const todo = await prisma.todo.findUnique({
-        where: { id: Number(id) }, // assuming id is a number
-      });
-  
-      if (!todo) {
-        return res.status(404).json({ message: "Todo not found" });
+
+
+export async function AddTodoController(req,res,next){
+     const {title,description,category,priority,userId } = req.body;
+
+      try {
+        const newTodo = await prisma.toDo.create({
+          data:{
+            title,
+            description,
+            category,
+            priority,
+            userId:Number(userId)
+          }
+        })
+        return res.status(201).json({ message: "Todo created", todo: newTodo });
+
+      } catch (error) {
+        console.error("Error creating todo:", error);
+        return res.status(500).json({ message: "Something went wrong", error });
       }
-  
-      res.status(200).json({ todo });
-    } catch (error) {
-      res.status(500).json({ message: "Something went wrong" });
+}
+export async function getTodoController(req, res, next) {
+  const id = req.params.id;
+
+  try {
+    const getTodo = await prisma.toDo.findFirst({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    if (!getTodo) {
+      return res.status(404).json({ message: "Todo not found" });
     }
+
+    return res.status(200).json({ message: "Todo found", getTodo });
+  } catch (error) {
+    console.error("Error getting todo:", error);
+    res.status(500).json({ message: "Something went wrong" });
   }
-  
+}
+
+export async function updateTodoController(req, res, next) {
+  const id = Number(req.params.id);
+  const { title, description, category, priority } = req.body;
+
+  try {
+    const updatedTodo = await prisma.toDo.update({
+      where: { id },
+      data: {
+        title,
+        description,
+        category,
+        priority,
+      },
+    });
+
+    return res.status(200).json({ message: "Todo updated", todo: updatedTodo });
+  } catch (error) {
+    console.error("Error updating todo:", error);
+    return res.status(500).json({ message: "Something went wrong", error });
+  }
+}
+
+export async function deleteTodoController(req, res, next) {
+  const id = Number(req.params.id);
+
+  try {
+    const deleted = await prisma.toDo.delete({
+      where: { id },
+    });
+
+    return res.status(200).json({ message: "Todo deleted", todo: deleted });
+  } catch (error) {
+    console.error("Error deleting todo:", error);
+    return res.status(500).json({ message: "Something went wrong", error });
+  }
+}

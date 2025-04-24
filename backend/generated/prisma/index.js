@@ -164,11 +164,12 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": "postgresql://todo-app_owner:npg_YCbcALEu6ym9@ep-damp-term-a53bq5an-pooler.us-east-2.aws.neon.tech:5432/todo-app?sslmode=require&connect_timeout=30&connection_limit=1"
+        "value": null
       }
     }
   },

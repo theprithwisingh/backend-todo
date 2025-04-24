@@ -1,18 +1,25 @@
 import express from "express";
-import {Pool} from 'pg'
-import { signinController, signupController, todoController } from "./controller/controller";
+import cors from "cors"
+import {signinController, signupController, AddTodoController, getTodoController, updateTodoController, deleteTodoController } from "./controller/controller.js";
 const app  = express()
 const PORT  = 3000;
 
-const pool = new Pool({
-    connectionString,
-  });
+app.use(cors({
 
-app.use(cors());
+}));
 app.use(express.json());
 
 app.post("/login",signinController)
 
 app.post("/signup",signupController)
 
-app.get("/todo/:id",todoController)
+app.post("/addtodo",AddTodoController)
+
+app.get("/gettodo/:id", getTodoController);
+
+app.put("/todo/:id", updateTodoController);
+
+app.delete("/todo/:id", deleteTodoController);
+
+
+app.listen(PORT,console.log(`this server is running on ${PORT}`))

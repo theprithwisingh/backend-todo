@@ -1,3 +1,12 @@
+const API_URL = 'http://localhost:3001/todos';
+
+const fetchTodo=()=>{
+  fetch(API_URL).then(response=>response.json()).then(todos=>{
+    todos.forEach(todo=>renderTask(todo))
+  })
+  .catch(error => console.error('Error fetching todos:', error));
+}
+
 const mainPage = document.getElementById("main-page");
 const toggleButton = document.getElementById("click");
 
@@ -103,21 +112,6 @@ const styleForRender = {
   },
 };
 
-// function renderTask(){
-//   taskList.innerHTML="";
-//   taskArr.forEach((item,index)=>{
-//   const taskItem = document.createElement("div");
-//   taskItem.classList.add("taskItem")
-
-  
-//   taskItem.innerHTML= `
-//   <p onclick="modalFun(${index})"><strong>Title:</strong> ${item.title}</p>
-//   <button onclick="deleteBtn(${index})">Delete</button>
-//   <button onclick="editBtn(${index})">Edit</button>
-//  `
-//   taskList.appendChild(taskItem)
-//   })
-// }
 
 function renderTask() {
   taskList.innerHTML = "";
