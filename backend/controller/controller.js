@@ -2,9 +2,10 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import {PrismaClient} from "@prisma/client";
+import { generateToken } from '../utils/generateToken';
 const prisma = new PrismaClient();
 
-export async function signupController(req, res, next) {
+export async function signupController(req, res) {
   const { name, username, email, password } = req.body;
   const existingUser  = prisma.user.findFirst({
     where: {
@@ -49,7 +50,7 @@ export async function signupController(req, res, next) {
   }
   next();
 }
-export async function signinController(req, res, next) {
+export async function signinController(req, res) {
   const { username, password } = req.body;
   const user = await prisma.user.findFirst({
     where: {
@@ -65,19 +66,15 @@ export async function signinController(req, res, next) {
   if (!isValid) {
     return res.status(401).json({ message: 'Invalid credentials' });
   }
-  const token = jwt.sign(
-    { id: user.id, username: user.username, email: user.email }, 
-    process.env.JWT_SECRET,
-    {expiresIn:"1h"}
-  )
-  
+
+  const token = generateToken(user)
   return res.status(200).json({ message: 'Login successful', token, user: { id: user.id, username: user.username } });
  next()
 }
 
 
 
-export async function AddTodoController(req,res,next){
+export async function AddTodoController(req,res){
      const {title,description,category,priority,userId } = req.body;
 
       try {
@@ -97,7 +94,7 @@ export async function AddTodoController(req,res,next){
         return res.status(500).json({ message: "Something went wrong", error });
       }
 }
-export async function getTodoController(req, res, next) {
+export async function getTodoController(req, res) {
   const id = req.params.id;
 
   try {
@@ -118,7 +115,7 @@ export async function getTodoController(req, res, next) {
   }
 }
 
-export async function updateTodoController(req, res, next) {
+export async function updateTodoController(req, res) {
   const id = Number(req.params.id);
   const { title, description, category, priority } = req.body;
 
@@ -140,7 +137,7 @@ export async function updateTodoController(req, res, next) {
   }
 }
 
-export async function deleteTodoController(req, res, next) {
+export async function deleteTodoController(req, res) {
   const id = Number(req.params.id);
 
   try {
